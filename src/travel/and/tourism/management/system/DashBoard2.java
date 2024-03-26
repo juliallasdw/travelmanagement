@@ -4,8 +4,8 @@ import java.awt.Color;
 import javax.swing.*;
 import java.awt.*;
 
-public class DashBoard extends JFrame {
-    DashBoard(){
+public class DashBoard2 extends JFrame {
+    DashBoard2(){
        // setBounds(0,0,1600,1000);
        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setLayout(null);
@@ -76,7 +76,7 @@ public class DashBoard extends JFrame {
        checkpackages.setMargin(new Insets(0,0,0,110));
        p2.add(checkpackages);
        
-       JButton bookpackages=new JButton("Book Packages");
+       JButton bookpackages=new JButton("Update Packages");
        bookpackages.setBounds(0, 250, 300, 50);
        bookpackages.setBackground(new Color(0,0,102));
        bookpackages.setForeground(Color.WHITE);
@@ -97,23 +97,23 @@ public class DashBoard extends JFrame {
        viewhotels.setBackground(new Color(0,0,102));
        viewhotels.setForeground(Color.WHITE);
        viewhotels.setFont(new Font("Tahoma",Font.PLAIN,20));
-       viewhotels.setMargin(new Insets(0,-150,0,0));
+       viewhotels.setMargin(new Insets(0,0,0,130));
        p2.add(viewhotels);
        
-       JButton bookhotels=new JButton("Book Holtel");
+       JButton bookhotels=new JButton("Update Holtel");
        bookhotels.setBounds(0, 400, 300, 50);
        bookhotels.setBackground(new Color(0,0,102));
        bookhotels.setForeground(Color.WHITE);
        bookhotels.setFont(new Font("Tahoma",Font.PLAIN,20));
-       bookhotels.setMargin(new Insets(0,-150,0,0));
+       bookhotels.setMargin(new Insets(0,0,0,140));
        p2.add(bookhotels);
        
-       JButton viewBookedHotels=new JButton("View Booked Hotel");
+       JButton viewBookedHotels=new JButton("Check Hotel");
        viewBookedHotels.setBounds(0, 450, 300, 50);
        viewBookedHotels.setBackground(new Color(0,0,102));
        viewBookedHotels.setForeground(Color.WHITE);
        viewBookedHotels.setFont(new Font("Tahoma",Font.PLAIN,20));
-       viewBookedHotels.setMargin(new Insets(0,-100,0,0));
+       viewBookedHotels.setMargin(new Insets(0,0,0,150));
        p2.add(viewBookedHotels);
        
        
@@ -122,44 +122,28 @@ public class DashBoard extends JFrame {
        destinations.setBackground(new Color(0,0,102));
        destinations.setForeground(Color.WHITE);
        destinations.setFont(new Font("Tahoma",Font.PLAIN,20));
-       destinations.setMargin(new Insets(0,-150,0,0));
+       destinations.setMargin(new Insets(0,0,0,140));
        p2.add(destinations);
        
-       JButton payments=new JButton("Payments");
-       payments.setBounds(0, 550, 300, 50);
-       payments.setBackground(new Color(0,0,102));
-       payments.setForeground(Color.WHITE);
-       payments.setFont(new Font("Tahoma",Font.PLAIN,20));
-       payments.setMargin(new Insets(0,-150,0,0));
-       p2.add(payments);
        
-       JButton calculators=new JButton("Calculators");
-       calculators.setBounds(0, 600, 300, 50);
-       calculators.setBackground(new Color(0,0,102));
-       calculators.setForeground(Color.WHITE);
-       calculators.setFont(new Font("Tahoma",Font.PLAIN,20));
-       calculators.setMargin(new Insets(0,-150,0,0));
-       p2.add(calculators);
        
        JButton notepad=new JButton("Notepad");
-       notepad.setBounds(0, 650, 300, 50);
+       notepad.setBounds(0, 550, 300, 50);
        notepad.setBackground(new Color(0,0,102));
        notepad.setForeground(Color.WHITE);
        notepad.setFont(new Font("Tahoma",Font.PLAIN,20));
-       notepad.setMargin(new Insets(0,-150,0,0));
+       notepad.setMargin(new Insets(0,0,0,145));
        p2.add(notepad);
        
        JButton about=new JButton("About");
-       about.setBounds(0, 700, 300, 50);
+       about.setBounds(0, 600, 300, 50);
        about.setBackground(new Color(0,0,102));
        about.setForeground(Color.WHITE);
        about.setFont(new Font("Tahoma",Font.PLAIN,20));
-       about.setMargin(new Insets(0,-150,0,0));
+       about.setMargin(new Insets(0,0,0,175));
        p2.add(about);
-    
-    
-             
-       ImageIcon i4=new ImageIcon(ClassLoader.getSystemResource("icons/home.jpg"));
+       
+       ImageIcon i4=new ImageIcon(ClassLoader.getSystemResource("icons/home4.jpg"));
        Image i5=i4.getImage().getScaledInstance(1920, 1050, Image.SCALE_DEFAULT);
        ImageIcon i6=new ImageIcon(i5);
        JLabel image=new JLabel(i6);
@@ -194,7 +178,8 @@ public class DashBoard extends JFrame {
     }
     
     public static void main(String[] args){
-       new DashBoard();
+       new DashBoard2();
      }
 
 }
+

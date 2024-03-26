@@ -11,7 +11,7 @@ public class Signup extends JFrame implements ActionListener {
     
     JButton create,back;
     JTextField tfname,tfusername,tfpassword,tfanswer;
-    Choice security;
+    Choice security,roleChoice;
     Signup(){
         setBounds(350, 200, 900, 360);
         getContentPane().setBackground(Color.WHITE);
@@ -99,6 +99,17 @@ public class Signup extends JFrame implements ActionListener {
         back.addActionListener(this);
         p2.add(back);
         
+        JLabel lblrole = new JLabel("Select Role");
+        lblrole.setBounds(50, 220, 125, 25);
+        lblrole.setFont(new Font("Tahoma", Font.BOLD, 14));
+        p2.add(lblrole);
+
+        roleChoice = new Choice();
+        roleChoice.add("User");
+        roleChoice.add("Manager");
+        roleChoice.setBounds(190, 220, 180, 25);
+        p2.add(roleChoice);
+        
         ImageIcon i1=new ImageIcon(ClassLoader.getSystemResource("icons/signup.png"));
         Image i2=i1.getImage().getScaledInstance(250,250,Image.SCALE_DEFAULT );
         ImageIcon i3=new ImageIcon(i2);
@@ -113,38 +124,34 @@ public class Signup extends JFrame implements ActionListener {
                 
         
     }
-    @Override
-     public void  actionPerformed(ActionEvent ae){
-         if(ae.getSource()== create){
-             String username=tfusername.getText();
-             String name=tfname.getText();
-             String password=tfpassword.getText();
-             String question=security.getSelectedItem();
-             String answer=tfanswer.getText();
-             String query="insert into account values('"+username+"','"+name+"','"+password+"','"+question+"','"+answer+"')";
-     try
-        {
-            Conn c=new Conn();
-            c.s.executeUpdate(query);
-            JOptionPane.showMessageDialog(null,"Account Created Successfully");
+   @Override
+    public void actionPerformed(ActionEvent ae) {
+        if (ae.getSource() == create) {
+            String username = tfusername.getText();
+            String name = tfname.getText();
+            String password = tfpassword.getText();
+            String question = security.getSelectedItem();
+            String answer = tfanswer.getText();
+            String role = roleChoice.getSelectedItem(); // Lấy vai trò được chọn
+
+            // Thêm giá trị vai trò vào truy vấn SQL
+            String query = "INSERT INTO account (username, name, password, security, answer, role) VALUES ('" + username + "', '" + name + "', '" + password + "', '" + question + "', '" + answer + "', '" + role + "')";
+            try {
+                Conn c = new Conn();
+                c.s.executeUpdate(query);
+                JOptionPane.showMessageDialog(null, "Account Created Successfully");
+                setVisible(false);
+                new Login();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if (ae.getSource() == back) {
             setVisible(false);
             new Login();
         }
-     catch (Exception e)
-     {
-         e.printStackTrace();
-     }
-         
-         
-         }else if(ae.getSource()== back){
-             setVisible(false);
-             new Login();
-         }
-         
-     }
-  
-     
-     public static void main(String[] args){
-       new Signup();
-     }
+    }
+
+    public static void main(String[] args) {
+        new Signup();
+    }
 }
