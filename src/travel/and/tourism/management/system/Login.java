@@ -1,15 +1,16 @@
 package travel.and.tourism.management.system;
 
-import java.awt.Color;
 import javax.swing.*;
 import java.awt.*;
-import javax.swing.border.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.ResultSet;
+import javax.swing.border.LineBorder;
 
 public class Login extends JFrame implements ActionListener {
-    JButton login, password, signup;
-    JTextField tfusername, tfpassword;
+    private JButton login, password, signup;
+    private JTextField tfusername;
+    private JPasswordField tfpassword;
 
     Login() {
         setSize(800, 400);
@@ -22,6 +23,7 @@ public class Login extends JFrame implements ActionListener {
         p1.setBounds(0, 0, 400, 400);
         p1.setLayout(null);
         add(p1);
+
         ImageIcon i1 = new ImageIcon(ClassLoader.getSystemResource("icons/login.png"));
         Image i2 = i1.getImage().getScaledInstance(200, 200, Image.SCALE_DEFAULT);
         ImageIcon i3 = new ImageIcon(i2);
@@ -49,7 +51,7 @@ public class Login extends JFrame implements ActionListener {
         lblpassword.setFont(new Font("SAN SERIF", Font.PLAIN, 20));
         p2.add(lblpassword);
 
-        tfpassword = new JPasswordField(); // Sử dụng JPasswordField thay vì JTextField cho password
+        tfpassword = new JPasswordField();
         tfpassword.setBounds(60, 150, 300, 30);
         tfpassword.setBorder(BorderFactory.createEmptyBorder());
         p2.add(tfpassword);
@@ -81,65 +83,63 @@ public class Login extends JFrame implements ActionListener {
         setVisible(true);
     }
 
-   public void actionPerformed(ActionEvent ae) {
-    if (ae.getSource() == login) {
-        String username = tfusername.getText();
-        String password = tfpassword.getText();
+    public void actionPerformed(ActionEvent ae) {
+        if (ae.getSource() == login) {
+            String username = tfusername.getText();
+            String password = new String(tfpassword.getPassword());
 
-        // Kiểm tra thông tin đăng nhập với cơ sở dữ liệu
-        String role = checkLogin(username, password);
+            String role = checkLogin(username, password);
 
-        if (role != null) {
-            // Nếu đăng nhập thành công
-            if (role.equals("User")) {
-                // Nếu là vai trò "user", chuyển hướng sang trang giao diện của người dùng
-                new DashBoard();
-            } else if (role.equals("Manager")) {
-                // Nếu là vai trò "manager", chuyển hướng sang trang giao diện của quản lý
-                new DashBoard2();
+            if (role != null) {
+                // Lưu thông tin người dùng vào Session
+                UserSession.getInstance().setLoggedInUsername(username);
+                UserSession.getInstance().setRole(role);
+
+                // Đóng cửa sổ đăng nhập và mở Dashboard
+                dispose();
+                updateDashboard(role);
+            } else {
+                JOptionPane.showMessageDialog(this, "Invalid username or password. Please try again.");
+            }
+        } else if (ae.getSource() == signup) {
+            setVisible(false);
+            new Signup();
+        } else {
+            setVisible(false);
+            new ForgetPassword();
+        }
+    }
+
+    private String checkLogin(String username, String password) {
+        String role = null;
+
+        try {
+            String query = "SELECT role FROM account WHERE username = '" + username + "' AND password = '" + password + "'";
+            Conn c = new Conn();
+            ResultSet rs = c.s.executeQuery(query);
+
+            if (rs.next()) {
+                role = rs.getString("role");
             }
 
-            // Đóng trang đăng nhập
-            dispose();
-        } else {
-            // Hiển thị thông báo lỗi nếu đăng nhập không thành công
-            JOptionPane.showMessageDialog(this, "Tên người dùng hoặc mật khẩu không chính xác!");
-        }
-    } else if (ae.getSource() == signup) {
-        setVisible(false);
-        new Signup();
-    } else {
-        setVisible(false);
-        new ForgetPassword();
-    }
-}
+            rs.close();
 
-// Phương thức để kiểm tra thông tin đăng nhập với cơ sở dữ liệu và trả về vai trò của người dùng
-private String checkLogin(String username, String password) {
-    String role = null;
-
-    try {
-        String query = "SELECT role FROM account WHERE username = '" + username + "' AND password = '" + password + "'";
-        Conn c = new Conn();
-        ResultSet rs = c.s.executeQuery(query);
-
-        // Nếu có bất kỳ bản ghi nào được trả về, có nghĩa là thông tin đăng nhập hợp lệ
-        if (rs.next()) {
-            // Lấy vai trò của người dùng từ kết quả truy vấn
-            role = rs.getString("role");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        // Đóng kết nối và tài nguyên
-        rs.close();
-
-    } catch (Exception e) {
-        e.printStackTrace();
+        return role;
     }
 
-    return role;
-}
+    private void updateDashboard(String role) {
+        if (role.equals("User")) {
+            new DashBoard();
+        } else if (role.equals("Manager")) {
+            new DashBoard2();
+        }
+    }
 
-public static void main(String[] args) {
+    public static void main(String[] args) {
         new Login();
     }
 }

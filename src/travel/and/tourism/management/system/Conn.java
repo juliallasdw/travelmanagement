@@ -3,6 +3,8 @@ package travel.and.tourism.management.system;
 
 import java.sql.Connection;
 import java.sql.*;
+import java.sql.PreparedStatement;
+
 
     
 public class Conn{
@@ -23,4 +25,7 @@ public class Conn{
      }
      
         }
+public PreparedStatement prepareStatement(String sql) throws SQLException {
+    return c.prepareStatement(sql);
+}
 }

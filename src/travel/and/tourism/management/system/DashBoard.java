@@ -3,6 +3,7 @@ package travel.and.tourism.management.system;
 import java.awt.Color;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 
 public class DashBoard extends JFrame {
     DashBoard(){
@@ -36,6 +37,8 @@ public class DashBoard extends JFrame {
        p2.setBounds(0,65,300,950);
        add(p2);
        
+       setVisible(true);
+       
        JButton addPersonalDetails=new JButton("Add Personal Details");
        addPersonalDetails.setBounds(0, 0, 300, 50);
        addPersonalDetails.setBackground(new Color(0,0,102));
@@ -44,29 +47,8 @@ public class DashBoard extends JFrame {
        addPersonalDetails.setMargin(new Insets(0,0,0,60));
        p2.add(addPersonalDetails);
        
-       JButton updatePersonalDetails=new JButton("Update Personal Details");
-       updatePersonalDetails.setBounds(0, 50, 300, 50);
-       updatePersonalDetails.setBackground(new Color(0,0,102));
-       updatePersonalDetails.setForeground(Color.WHITE);
-       updatePersonalDetails.setFont(new Font("Tahoma",Font.PLAIN,20));
-       updatePersonalDetails.setMargin(new Insets(0,0,0,30));
-       p2.add(updatePersonalDetails);
        
-       JButton viewPersonalDetails=new JButton("View Details");
-       viewPersonalDetails.setBounds(0, 100, 300, 50);
-       viewPersonalDetails.setBackground(new Color(0,0,102));
-       viewPersonalDetails.setForeground(Color.WHITE);
-       viewPersonalDetails.setFont(new Font("Tahoma",Font.PLAIN,20));
-       viewPersonalDetails.setMargin(new Insets(0,0,0,130));
-       p2.add(viewPersonalDetails);
-       
-       JButton deletePersonalDetails=new JButton("Delete Personal Details");
-       deletePersonalDetails.setBounds(0, 150, 300, 50);
-       deletePersonalDetails.setBackground(new Color(0,0,102));
-       deletePersonalDetails.setForeground(Color.WHITE);
-       deletePersonalDetails.setFont(new Font("Tahoma",Font.PLAIN,20));
-       deletePersonalDetails.setMargin(new Insets(0,0,0,40));
-       p2.add(deletePersonalDetails);
+    
        
        JButton checkpackages=new JButton("Check Packages");
        checkpackages.setBounds(0, 200, 300, 50);
@@ -76,6 +58,9 @@ public class DashBoard extends JFrame {
        checkpackages.setMargin(new Insets(0,0,0,110));
        p2.add(checkpackages);
        
+       
+    
+       
        JButton bookpackages=new JButton("Book Packages");
        bookpackages.setBounds(0, 250, 300, 50);
        bookpackages.setBackground(new Color(0,0,102));
@@ -83,6 +68,24 @@ public class DashBoard extends JFrame {
        bookpackages.setFont(new Font("Tahoma",Font.PLAIN,20));
        bookpackages.setMargin(new Insets(0,0,0,120));
        p2.add(bookpackages);
+       
+       
+      bookpackages.addActionListener(new ActionListener() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        // Kiểm tra xem người dùng đã đăng nhập hay chưa
+        if (UserSession.getInstance().getLoggedInUsername() != null) {
+            // Nếu người dùng đã đăng nhập, chuyển đến trang TourBooking
+            new TourBooking();
+        } else {
+            // Nếu người dùng chưa đăng nhập, hiển thị cửa sổ đăng nhập
+            new Login();
+        }
+    }
+});
+
+
+    
        
        JButton viewpackages=new JButton("View Packages");
        viewpackages.setBounds(0, 300, 300, 50);
@@ -100,23 +103,7 @@ public class DashBoard extends JFrame {
        viewhotels.setMargin(new Insets(0,-150,0,0));
        p2.add(viewhotels);
        
-       JButton bookhotels=new JButton("Book Holtel");
-       bookhotels.setBounds(0, 400, 300, 50);
-       bookhotels.setBackground(new Color(0,0,102));
-       bookhotels.setForeground(Color.WHITE);
-       bookhotels.setFont(new Font("Tahoma",Font.PLAIN,20));
-       bookhotels.setMargin(new Insets(0,-150,0,0));
-       p2.add(bookhotels);
-       
-       JButton viewBookedHotels=new JButton("View Booked Hotel");
-       viewBookedHotels.setBounds(0, 450, 300, 50);
-       viewBookedHotels.setBackground(new Color(0,0,102));
-       viewBookedHotels.setForeground(Color.WHITE);
-       viewBookedHotels.setFont(new Font("Tahoma",Font.PLAIN,20));
-       viewBookedHotels.setMargin(new Insets(0,-100,0,0));
-       p2.add(viewBookedHotels);
-       
-       
+      
        JButton destinations=new JButton("Destinations");
        destinations.setBounds(0, 500, 300, 50);
        destinations.setBackground(new Color(0,0,102));
@@ -169,7 +156,14 @@ public class DashBoard extends JFrame {
        
        
        
-
+            addPersonalDetails.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Tạo một thể hiện của lớp AddCustomer
+                AddCustomer addCustomerFrame = new AddCustomer();
+                // Hiển thị cửa sổ AddCustomer
+                addCustomerFrame.setVisible(true);
+            }
+        });
 
        
        
