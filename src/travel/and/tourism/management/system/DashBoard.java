@@ -50,19 +50,13 @@ public class DashBoard extends JFrame {
        
     
        
-       JButton checkpackages=new JButton("Check Packages");
-       checkpackages.setBounds(0, 200, 300, 50);
-       checkpackages.setBackground(new Color(0,0,102));
-       checkpackages.setForeground(Color.WHITE);
-       checkpackages.setFont(new Font("Tahoma",Font.PLAIN,20));
-       checkpackages.setMargin(new Insets(0,0,0,110));
-       p2.add(checkpackages);
+       
        
        
     
        
-       JButton bookpackages=new JButton("Book Packages");
-       bookpackages.setBounds(0, 250, 300, 50);
+       JButton bookpackages=new JButton("Book Tour");
+       bookpackages.setBounds(0, 50, 300, 50);
        bookpackages.setBackground(new Color(0,0,102));
        bookpackages.setForeground(Color.WHITE);
        bookpackages.setFont(new Font("Tahoma",Font.PLAIN,20));
@@ -87,25 +81,19 @@ public class DashBoard extends JFrame {
 
     
        
-       JButton viewpackages=new JButton("View Packages");
-       viewpackages.setBounds(0, 300, 300, 50);
+       JButton viewpackages=new JButton("View Booked Tour");
+       viewpackages.setBounds(0, 100, 300, 50);
        viewpackages.setBackground(new Color(0,0,102));
        viewpackages.setForeground(Color.WHITE);
        viewpackages.setFont(new Font("Tahoma",Font.PLAIN,20));
        viewpackages.setMargin(new Insets(0,0,0,120));
        p2.add(viewpackages);
        
-       JButton viewhotels=new JButton("View Hotel");
-       viewhotels.setBounds(0, 350, 300, 50);
-       viewhotels.setBackground(new Color(0,0,102));
-       viewhotels.setForeground(Color.WHITE);
-       viewhotels.setFont(new Font("Tahoma",Font.PLAIN,20));
-       viewhotels.setMargin(new Insets(0,-150,0,0));
-       p2.add(viewhotels);
+       
        
       
        JButton destinations=new JButton("Destinations");
-       destinations.setBounds(0, 500, 300, 50);
+       destinations.setBounds(0, 150, 300, 50);
        destinations.setBackground(new Color(0,0,102));
        destinations.setForeground(Color.WHITE);
        destinations.setFont(new Font("Tahoma",Font.PLAIN,20));
@@ -113,7 +101,7 @@ public class DashBoard extends JFrame {
        p2.add(destinations);
        
        JButton payments=new JButton("Payments");
-       payments.setBounds(0, 550, 300, 50);
+       payments.setBounds(0, 200, 300, 50);
        payments.setBackground(new Color(0,0,102));
        payments.setForeground(Color.WHITE);
        payments.setFont(new Font("Tahoma",Font.PLAIN,20));
@@ -121,23 +109,17 @@ public class DashBoard extends JFrame {
        p2.add(payments);
        
        JButton calculators=new JButton("Calculators");
-       calculators.setBounds(0, 600, 300, 50);
+       calculators.setBounds(0, 250, 300, 50);
        calculators.setBackground(new Color(0,0,102));
        calculators.setForeground(Color.WHITE);
        calculators.setFont(new Font("Tahoma",Font.PLAIN,20));
        calculators.setMargin(new Insets(0,-150,0,0));
        p2.add(calculators);
        
-       JButton notepad=new JButton("Notepad");
-       notepad.setBounds(0, 650, 300, 50);
-       notepad.setBackground(new Color(0,0,102));
-       notepad.setForeground(Color.WHITE);
-       notepad.setFont(new Font("Tahoma",Font.PLAIN,20));
-       notepad.setMargin(new Insets(0,-150,0,0));
-       p2.add(notepad);
+     
        
        JButton about=new JButton("About");
-       about.setBounds(0, 700, 300, 50);
+       about.setBounds(0, 300, 300, 50);
        about.setBackground(new Color(0,0,102));
        about.setForeground(Color.WHITE);
        about.setFont(new Font("Tahoma",Font.PLAIN,20));

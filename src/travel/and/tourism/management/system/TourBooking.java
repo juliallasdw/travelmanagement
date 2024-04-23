@@ -1,114 +1,172 @@
 package travel.and.tourism.management.system;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import javax.swing.table.DefaultTableModel;
 
 public class TourBooking extends JFrame {
-    private String username;
+    private JTable tourTable;
+    private JTextField searchField;
+    private JButton searchButton, bookButton;
+    private JScrollPane scrollPane;
 
     public TourBooking() {
-        this.username = UserSession.getInstance().getLoggedInUsername(); // Lấy thông tin người dùng từ UserSession
-
         setTitle("Tour Booking");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 600);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        // Tạo JPanel để chứa hình ảnh và combobox
-        JPanel imagePanel = new JPanel();
-        imagePanel.setLayout(new BorderLayout());
+        JPanel searchPanel = new JPanel();
+        searchPanel.setLayout(new FlowLayout());
 
-        // Thêm hình ảnh vào JLabel và đặt ở trên cùng
-        JLabel imageLabel = new JLabel(new ImageIcon("province_image.jpg")); // Thay "province_image.jpg" bằng đường dẫn đến hình ảnh thực tế
-        imagePanel.add(imageLabel, BorderLayout.NORTH);
+        searchField = new JTextField(20);
+        searchPanel.add(searchField);
 
-        // Tạo combobox chứa danh sách tỉnh
-        String[] provinces = {"Hà Nội", "Đà Nẵng", "Đà Lạt", "Quảng Ninh", "Khánh Hòa"};
-        JComboBox<String> provinceComboBox = new JComboBox<>(provinces);
-        imagePanel.add(provinceComboBox, BorderLayout.CENTER);
+        searchButton = new JButton("Search");
+        searchPanel.add(searchButton);
 
-        add(imagePanel, BorderLayout.NORTH);
+        add(searchPanel, BorderLayout.NORTH);
 
-        JPanel tourInfoPanel = new JPanel();
-        tourInfoPanel.setLayout(new BoxLayout(tourInfoPanel, BoxLayout.Y_AXIS));
-        tourInfoPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        // Hiển thị danh sách tour
+        tourTable = new JTable();
+        scrollPane = new JScrollPane(tourTable);
+        add(scrollPane, BorderLayout.CENTER);
 
-        JLabel tourLabel = new JLabel("Tour Information");
-        tourLabel.setFont(new Font("Arial", Font.BOLD, 18));
-        tourInfoPanel.add(tourLabel);
+        // Tải danh sách tour khi khởi động
+        loadTourList();
 
-        JLabel tourDescriptionLabel = new JLabel();
-        tourInfoPanel.add(tourDescriptionLabel);
-
-        provinceComboBox.addActionListener(new ActionListener() {
+        // Thêm sự kiện cho nút tìm kiếm
+        searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String selectedProvince = (String) provinceComboBox.getSelectedItem();
-                String tourDescription = getTourDescription(selectedProvince);
-                tourDescriptionLabel.setText(tourDescription);
+                String keyword = searchField.getText();
+                searchTour(keyword);
             }
         });
 
-        add(tourInfoPanel, BorderLayout.CENTER);
+        // Thêm sự kiện cho nút book
+        bookButton = new JButton("Book Now");
+       bookButton.addActionListener(new ActionListener() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        int selectedRow = tourTable.getSelectedRow();
+        if (selectedRow != -1) {
+            int tourId = (int) tourTable.getValueAt(selectedRow, 0);
+            String tourName = (String) tourTable.getValueAt(selectedRow, 1);
+            bookTour(tourId, tourName);
+        } else {
+            JOptionPane.showMessageDialog(TourBooking.this, "Please select a tour to book.");
+        }
+    }
+});
+add(bookButton, BorderLayout.SOUTH);
 
-        JButton bookNowButton = new JButton("Book Now");
-        bookNowButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String userInfo = UserSession.getInstance().getLoggedInUsername();
-                JOptionPane.showMessageDialog(TourBooking.this, "Booking successful! Thank you for choosing our tour.");
-            }
-        });
-        add(bookNowButton, BorderLayout.SOUTH);
 
         setVisible(true);
     }
 
-    private String getTourDescription(String province) {
-        String tourDescription = "";
+    private void loadTourList() {
+        try {
+            Conn c = new Conn();
+            String query = "SELECT * FROM tours";
+            PreparedStatement ps = c.c.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();
 
-        switch (province) {
-            case "Hà Nội":{
-                tourDescription = "Tour Hà Nội: 3 ngày 2 đêm, giá $500";
-               JPanel p1 = new JPanel();
-                p1.setBackground(new Color(131, 193, 233));
-                p1.setBounds(0, 0, 400, 400);
-                p1.setLayout(null);
-                add(p1);
-                
-                ImageIcon i1 = new ImageIcon(ClassLoader.getSystemResource("icons/login.png"));
-                Image i2 = i1.getImage().getScaledInstance(200, 200, Image.SCALE_DEFAULT);
-                 ImageIcon i3 = new ImageIcon(i2);
-                JLabel image = new JLabel(i3);
-                 image.setBounds(100, 120, 200, 200);
-                 p1.add(image);}
-                break;
-            case "Đà Nẵng":
-                tourDescription = "Tour Đà Nẵng: 4 ngày 3 đêm, giá $700";
-                break;
-            case "Đà Lạt":
-                tourDescription = "Tour Đà Lạt: 2 ngày 1 đêm, giá $400";
-                break;
-            case "Quảng Ninh":
-                tourDescription = "Tour Quảng Ninh: 5 ngày 4 đêm, giá $900";
-                break;
-            case "Khánh Hòa":
-                tourDescription = "Tour Khánh Hòa: 7 ngày 6 đêm, giá $1200";
-                break;
-            default:
-                tourDescription = "Chưa có tour cho tỉnh này.";
-                break;
+            DefaultTableModel model = new DefaultTableModel();
+            model.addColumn("Tour ID");
+            model.addColumn("Tour Name");
+            model.addColumn("Duration");
+            model.addColumn("Price");
+            model.addColumn("Location");
+
+            while (rs.next()) {
+                // Lấy thông tin của tour từ cơ sở dữ liệu và thêm vào model
+                int tourId = rs.getInt("tour_id");
+                String tourName = rs.getString("tour_name");
+                String duration = rs.getString("duration");
+                double price = rs.getDouble("price");
+                String location = rs.getString("location");
+
+                model.addRow(new Object[]{tourId, tourName, duration, price, location});
+            }
+
+            tourTable.setModel(model);
+
+            rs.close();
+            ps.close();
+            c.c.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Failed to load tour list from database.");
+        }
+    }
+
+    private void searchTour(String keyword) {
+        try {
+        Conn c = new Conn();
+        String query = "SELECT * FROM tours WHERE tour_name LIKE ?";
+        PreparedStatement ps = c.c.prepareStatement(query);
+        ps.setString(1, "%" + keyword + "%");
+        ResultSet rs = ps.executeQuery();
+
+        DefaultTableModel model = new DefaultTableModel();
+        model.addColumn("Tour ID");
+        model.addColumn("Tour Name");
+        model.addColumn("Duration");
+        model.addColumn("Price");
+        model.addColumn("Location");
+
+        while (rs.next()) {
+            // Lấy thông tin của tour từ cơ sở dữ liệu và thêm vào model
+            int tourId = rs.getInt("tour_id");
+            String tourName = rs.getString("tour_name");
+            String duration = rs.getString("duration");
+            double price = rs.getDouble("price");
+            String location = rs.getString("location");
+
+            model.addRow(new Object[]{tourId, tourName, duration, price, location});
         }
 
-        return tourDescription;
+        tourTable.setModel(model);
+
+        rs.close();
+        ps.close();
+        c.c.close();
+    } catch (Exception e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(this, "Failed to search for tours.");
+    }
+    }
+
+    private void bookTour(int tourId,String tourName) {
+       try {
+        Conn c = new Conn();
+        String query = "INSERT INTO booked_tours (tour_id, tour_name, username) VALUES (?, ?, ?)";
+        PreparedStatement ps = c.c.prepareStatement(query);
+        ps.setInt(1, tourId);
+        ps.setString(2, tourName);
+        ps.setString(3, UserSession.getInstance().getLoggedInUsername());
+        int result = ps.executeUpdate();
+        c.c.close();
+
+        if (result > 0) {
+            JOptionPane.showMessageDialog(this, "Tour booked successfully!");
+        } else {
+            JOptionPane.showMessageDialog(this, "Failed to book tour.");
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(this, "Failed to book tour.");
+    }
     }
 
     public static void main(String[] args) {
-        UserSession.getInstance().setLoggedInUsername("your_username_here");
         new TourBooking();
     }
 }
-
 
