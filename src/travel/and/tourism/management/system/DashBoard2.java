@@ -86,7 +86,24 @@ public class DashBoard2 extends JFrame {
        about.setMargin(new Insets(0,0,0,175));
        menuPanel.add(about);
        
+       JButton logout=new JButton("Log out");
+       logout.setBounds(0, 900, 300, 50);
+       logout.setBackground(new Color(0,0,102));
+       logout.setForeground(Color.WHITE);
+       logout.setFont(new Font("Tahoma",Font.PLAIN,20));
+       logout.setMargin(new Insets(0,-150,0,0));
+       menuPanel.add(logout);
+    
        
+        logout.addActionListener(new ActionListener() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+       
+             dispose();
+            new Login();
+        
+    }
+});
        
        
        

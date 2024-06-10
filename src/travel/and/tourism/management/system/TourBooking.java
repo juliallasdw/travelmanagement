@@ -10,25 +10,41 @@ import javax.swing.table.DefaultTableModel;
 
 public class TourBooking extends JFrame {
     private JTable tourTable;
-    private JTextField searchField;
-    private JButton searchButton, bookButton;
+    private JTextField searchField,locationField;
+    private JButton searchButton, viewDetailsButton,locationSearchButton,durationSearchButton;
     private JScrollPane scrollPane;
+    private JComboBox<String> durationComboBox;
+
 
     public TourBooking() {
         setTitle("Tour Booking");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(800, 600);
+        setSize(1200, 600);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
         JPanel searchPanel = new JPanel();
         searchPanel.setLayout(new FlowLayout());
 
-        searchField = new JTextField(20);
-        searchPanel.add(searchField);
+       searchField = new JTextField(20);
+searchPanel.add(searchField);
 
-        searchButton = new JButton("Search");
-        searchPanel.add(searchButton);
+searchButton = new JButton("Search by Name");
+searchPanel.add(searchButton);
+
+locationField = new JTextField(20);
+searchPanel.add(locationField);
+
+locationSearchButton = new JButton("Search by Location");
+searchPanel.add(locationSearchButton);
+
+String[] durations = {"1 day 1 night", "2 days 1 night", "3 days 2 nights", "4 days 3 nights", "5 days 4 nights", "a week"};
+durationComboBox = new JComboBox<String>(durations);
+searchPanel.add(durationComboBox);
+
+durationSearchButton = new JButton("Search by Duration");
+searchPanel.add(durationSearchButton);
+
 
         add(searchPanel, BorderLayout.NORTH);
 
@@ -49,26 +65,162 @@ public class TourBooking extends JFrame {
             }
         });
 
-        // Thêm sự kiện cho nút book
-        bookButton = new JButton("Book Now");
-       bookButton.addActionListener(new ActionListener() {
+        searchButton.addActionListener(new ActionListener() {
     @Override
     public void actionPerformed(ActionEvent e) {
-        int selectedRow = tourTable.getSelectedRow();
-        if (selectedRow != -1) {
-            int tourId = (int) tourTable.getValueAt(selectedRow, 0);
-            String tourName = (String) tourTable.getValueAt(selectedRow, 1);
-            bookTour(tourId, tourName);
-        } else {
-            JOptionPane.showMessageDialog(TourBooking.this, "Please select a tour to book.");
-        }
+        String keyword = searchField.getText();
+        searchTourByName(keyword);
     }
 });
-add(bookButton, BorderLayout.SOUTH);
 
+locationSearchButton.addActionListener(new ActionListener() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        String location = locationField.getText();
+        searchTourByLocation(location);
+    }
+});
+
+durationSearchButton.addActionListener(new ActionListener() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        String duration = (String) durationComboBox.getSelectedItem();
+        searchTourByDuration(duration);
+    }
+});
+
+        // Thêm sự kiện cho nút xem chi tiết
+        viewDetailsButton = new JButton("View Details");
+        viewDetailsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = tourTable.getSelectedRow();
+                if (selectedRow != -1) {
+                    int tourId = (int) tourTable.getValueAt(selectedRow, 0);
+                    new TourDetails(tourId);
+                } else {
+                    JOptionPane.showMessageDialog(TourBooking.this, "Please select a tour to view details.");
+                }
+            }
+        });
+        add(viewDetailsButton, BorderLayout.SOUTH);
 
         setVisible(true);
     }
+
+    
+    
+    
+     private void searchTourByName(String keyword) {
+        try {
+            Conn c = new Conn();
+            String query = "SELECT * FROM tours WHERE tour_name LIKE ?";
+            PreparedStatement ps = c.c.prepareStatement(query);
+            ps.setString(1, "%" + keyword + "%");
+            ResultSet rs = ps.executeQuery();
+
+            DefaultTableModel model = new DefaultTableModel();
+            model.addColumn("Tour ID");
+            model.addColumn("Tour Name");
+            model.addColumn("Duration");
+            model.addColumn("Price");
+            model.addColumn("Location");
+
+            while (rs.next()) {
+                // Lấy thông tin của tour từ cơ sở dữ liệu và thêm vào model
+                int tourId = rs.getInt("tour_id");
+                String tourName = rs.getString("tour_name");
+                String duration = rs.getString("duration");
+                double price = rs.getDouble("price");
+                String location = rs.getString("location");
+
+                model.addRow(new Object[]{tourId, tourName, duration, price, location});
+            }
+
+            tourTable.setModel(model);
+
+            rs.close();
+            ps.close();
+            c.c.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Failed to search for tours.");
+        }
+    }
+    
+    
+    
+    private void searchTourByLocation(String location) {
+    try {
+        Conn c = new Conn();
+        String query = "SELECT * FROM tours WHERE location LIKE ?";
+        PreparedStatement ps = c.c.prepareStatement(query);
+        ps.setString(1, "%" + location + "%");
+        ResultSet rs = ps.executeQuery();
+
+        DefaultTableModel model = new DefaultTableModel();
+        model.addColumn("Tour ID");
+        model.addColumn("Tour Name");
+        model.addColumn("Duration");
+        model.addColumn("Price");
+        model.addColumn("Location");
+
+        while (rs.next()) {
+            int tourId = rs.getInt("tour_id");
+            String tourName = rs.getString("tour_name");
+            String duration = rs.getString("duration");
+            double price = rs.getDouble("price");
+            String tourLocation = rs.getString("location");
+
+            model.addRow(new Object[]{tourId, tourName, duration, price, tourLocation});
+        }
+
+        tourTable.setModel(model);
+
+        rs.close();
+        ps.close();
+        c.c.close();
+    } catch (Exception e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(this, "Failed to search for tours.");
+    }
+}
+
+private void searchTourByDuration(String duration) {
+    try {
+        Conn c = new Conn();
+        String query = "SELECT * FROM tours WHERE duration = ?";
+        PreparedStatement ps = c.c.prepareStatement(query);
+        ps.setString(1, duration);
+        ResultSet rs = ps.executeQuery();
+
+        DefaultTableModel model = new DefaultTableModel();
+        model.addColumn("Tour ID");
+        model.addColumn("Tour Name");
+        model.addColumn("Duration");
+        model.addColumn("Price");
+        model.addColumn("Location");
+
+        while (rs.next()) {
+            int tourId = rs.getInt("tour_id");
+            String tourName = rs.getString("tour_name");
+            String tourDuration = rs.getString("duration");
+            double price = rs.getDouble("price");
+            String location = rs.getString("location");
+
+            model.addRow(new Object[]{tourId, tourName, tourDuration, price, location});
+        }
+
+        tourTable.setModel(model);
+
+        rs.close();
+        ps.close();
+        c.c.close();
+    } catch (Exception e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(this, "Failed to search for tours.");
+    }
+}
 
     private void loadTourList() {
         try {
@@ -108,65 +260,42 @@ add(bookButton, BorderLayout.SOUTH);
 
     private void searchTour(String keyword) {
         try {
-        Conn c = new Conn();
-        String query = "SELECT * FROM tours WHERE tour_name LIKE ?";
-        PreparedStatement ps = c.c.prepareStatement(query);
-        ps.setString(1, "%" + keyword + "%");
-        ResultSet rs = ps.executeQuery();
+            Conn c = new Conn();
+            String query = "SELECT * FROM tours WHERE tour_name LIKE ?";
+            PreparedStatement ps = c.c.prepareStatement(query);
+            ps.setString(1, "%" + keyword + "%");
+            ResultSet rs = ps.executeQuery();
 
-        DefaultTableModel model = new DefaultTableModel();
-        model.addColumn("Tour ID");
-        model.addColumn("Tour Name");
-        model.addColumn("Duration");
-        model.addColumn("Price");
-        model.addColumn("Location");
+            DefaultTableModel model = new DefaultTableModel();
+            model.addColumn("Tour ID");
+            model.addColumn("Tour Name");
+            model.addColumn("Duration");
+            model.addColumn("Price");
+            model.addColumn("Location");
 
-        while (rs.next()) {
-            // Lấy thông tin của tour từ cơ sở dữ liệu và thêm vào model
-            int tourId = rs.getInt("tour_id");
-            String tourName = rs.getString("tour_name");
-            String duration = rs.getString("duration");
-            double price = rs.getDouble("price");
-            String location = rs.getString("location");
+            while (rs.next()) {
+                // Lấy thông tin của tour từ cơ sở dữ liệu và thêm vào model
+                int tourId = rs.getInt("tour_id");
+                String tourName = rs.getString("tour_name");
+                String duration = rs.getString("duration");
+                double price = rs.getDouble("price");
+                String location = rs.getString("location");
 
-            model.addRow(new Object[]{tourId, tourName, duration, price, location});
+                model.addRow(new Object[]{tourId, tourName, duration, price, location});
+            }
+
+            tourTable.setModel(model);
+
+            rs.close();
+            ps.close();
+            c.c.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Failed to search for tours.");
         }
-
-        tourTable.setModel(model);
-
-        rs.close();
-        ps.close();
-        c.c.close();
-    } catch (Exception e) {
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(this, "Failed to search for tours.");
-    }
-    }
-
-    private void bookTour(int tourId,String tourName) {
-       try {
-        Conn c = new Conn();
-        String query = "INSERT INTO booked_tours (tour_id, tour_name, username) VALUES (?, ?, ?)";
-        PreparedStatement ps = c.c.prepareStatement(query);
-        ps.setInt(1, tourId);
-        ps.setString(2, tourName);
-        ps.setString(3, UserSession.getInstance().getLoggedInUsername());
-        int result = ps.executeUpdate();
-        c.c.close();
-
-        if (result > 0) {
-            JOptionPane.showMessageDialog(this, "Tour booked successfully!");
-        } else {
-            JOptionPane.showMessageDialog(this, "Failed to book tour.");
-        }
-    } catch (Exception e) {
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(this, "Failed to book tour.");
-    }
     }
 
     public static void main(String[] args) {
         new TourBooking();
     }
 }
-

@@ -6,6 +6,8 @@ import java.awt.*;
 import java.awt.event.*;
 
 public class DashBoard extends JFrame {
+    
+    
     DashBoard(){
        // setBounds(0,0,1600,1000);
        setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -50,7 +52,7 @@ public class DashBoard extends JFrame {
        
     
        
-       
+        
        
        
     
@@ -89,6 +91,14 @@ public class DashBoard extends JFrame {
        viewpackages.setMargin(new Insets(0,0,0,120));
        p2.add(viewpackages);
        
+        viewpackages.addActionListener(new ActionListener() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+       
+            new ViewBookedTours();
+        
+    }
+});
        
        
       
@@ -125,7 +135,27 @@ public class DashBoard extends JFrame {
        about.setFont(new Font("Tahoma",Font.PLAIN,20));
        about.setMargin(new Insets(0,-150,0,0));
        p2.add(about);
+       
+       
+       
+       JButton logout=new JButton("Log out");
+       logout.setBounds(0, 900, 300, 50);
+       logout.setBackground(new Color(0,0,102));
+       logout.setForeground(Color.WHITE);
+       logout.setFont(new Font("Tahoma",Font.PLAIN,20));
+       logout.setMargin(new Insets(0,-150,0,0));
+       p2.add(logout);
     
+       
+        logout.addActionListener(new ActionListener() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+       
+             dispose();
+            new Login();
+        
+    }
+});
     
              
        ImageIcon i4=new ImageIcon(ClassLoader.getSystemResource("icons/home.jpg"));
